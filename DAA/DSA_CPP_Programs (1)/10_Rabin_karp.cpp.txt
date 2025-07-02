@@ -1,0 +1,57 @@
+#include<iostream>
+#include<string>
+using namespace std;
+
+#define d 256
+#define q 101  // A prime number
+
+void RabinKarp(string pat, string txt) {
+    int M = pat.length();
+    int N = txt.length();
+    int i, j;
+    int p = 0, t = 0, h = 1;
+
+    for(i = 0; i < M - 1; i++)
+        h = (h * d) % q;
+
+    for(i = 0; i < M; i++) {
+        p = (d * p + pat[i]) % q;
+        t = (d * t + txt[i]) % q;
+    }
+
+    for(i = 0; i <= N - M; i++) {
+        if(p == t) {
+            for(j = 0; j < M; j++)
+                if(txt[i + j] != pat[j])
+                    break;
+            if(j == M)
+                cout << "Pattern found at index " << i << endl;
+        }
+        if(i < N - M) {
+            t = (d * (t - txt[i] * h) + txt[i + M]) % q;
+            if(t < 0) t += q;
+        }
+    }
+}
+
+int main() {
+    string txt, pat;
+    cout << "Enter text: ";
+    getline(cin, txt);
+    cout << "Enter pattern to search: ";
+    getline(cin, pat);
+
+    RabinKarp(pat, txt);
+    return 0;
+}
+
+/*
+Sample Input:
+Enter text: AABAACAADAABAABA
+Enter pattern to search: AABA
+
+Sample Output:
+Pattern found at index 0
+Pattern found at index 9
+Pattern found at index 12
+*/
